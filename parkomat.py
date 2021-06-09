@@ -1,10 +1,10 @@
 from decimal import *
-from datetime import *
-import time
-import datetime
+from datetime import datetime
+from datetime import timedelta
 from re import compile
 from wyjatki import *
 
+getcontext().prec = 3
 
 
 class Moneta():
@@ -16,12 +16,12 @@ class Pieniadze(Moneta):
         super().__init__()
 
         if value in self.monety:
-            self._value = Decimal(str(value)).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+            self._value = Decimal(str(value))
         else:
             self._value = Decimal('0')
             raise ZlyNominalException
 
-        self._currency = 'PLN'
+        self._currency = 'ZŁ'
 
     def get_value(self):
         return self._value
@@ -33,7 +33,6 @@ class Pieniadze(Moneta):
 class Parkomat():
 
     def __init__(self):
-
         self._listaMonet = []
         self._suma = 0
         self._plate = ''
@@ -44,7 +43,7 @@ class Parkomat():
     def add_coin(self, coin, number):
 
         try:
-            self.checkNumberOfCoins(number)
+            self.check_amount_of_money(number)
 
         except NiepoprawnaLiczbaMonetException:
             raise NiepoprawnaLiczbaMonetException('Niepoprawna liczba monet')
@@ -61,13 +60,13 @@ class Parkomat():
                     self.departure(9)
                 else:
                     self.departure(7.2)
-        self.checkAmountofmoney(coin, number)
+        self.money_count(coin, number)
 
     def money_count(self, value, amount):
         value = Decimal(str(value))
 
         for i in range(len(self._listaMonet)):
-            if value == self._listaMonet[i].getValue():
+            if value == self._listaMonet[i].get_value():
                 if value < Decimal(str(10)):
                     self._iloscMonet[value] = amount
                     if self._iloscMonet[value] > 200:
@@ -81,7 +80,7 @@ class Parkomat():
 
     def get_license_plate(self, value):
         value = value.rstrip('\n')
-        format = compile("^[\w\ ]*$")
+        format = compile("^[\w ]*$")
         if format.match(value) is not None and 3 < len(
                 value) < 11 and value:
             value = value.replace(' ', '').upper()

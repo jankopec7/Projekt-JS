@@ -28,3 +28,8 @@ class BlednaRejestracjaException(Exception):
     def __init__(self, info="Niepoprawny numer rejestracyjny, wprowadź ponownie"):
         self.info = info
         super().__init__(self.info)
+
+class NieWrzuconoPieniedzyException(Exception):
+    def __init__(self, info="Nie wrzucono pieniędzy"):
+        self.info = info
+        super().__init__(self.info)

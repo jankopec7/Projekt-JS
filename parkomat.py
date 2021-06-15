@@ -6,7 +6,6 @@ from wyjatki import *
 
 getcontext().prec = 3
 
-
 class Moneta():
     monety = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50]
 
@@ -33,12 +32,12 @@ class Pieniadze(Moneta):
 class Parkomat():
 
     def __init__(self):
-        self._listaMonet = []
-        self._suma = 0
+        self._MoneyList = []
+        self._Sum = 0
         self._plate = ''
         self._currentTime = datetime.now()
         self._departureTime = self._currentTime
-        self._iloscMonet = {0.01: 0, 0.02: 0, 0.05: 0, 0.1: 0, 0.2: 0, 0.5: 0, 1: 0, 2: 0, 5: 0}
+        self._Quantity = {0.01: 0, 0.02: 0, 0.05: 0, 0.1: 0, 0.2: 0, 0.5: 0, 1: 0, 2: 0, 5: 0}
 
     def add_coin(self, coin, number):
 
@@ -46,17 +45,17 @@ class Parkomat():
             self.check_amount_of_money(number)
 
         except NiepoprawnaLiczbaMonetException:
-            raise NiepoprawnaLiczbaMonetException('Niepoprawna liczba monet')
+            raise NiepoprawnaLiczbaMonetException
 
         number = int(number)
         grosze = int(100 * coin)
-        self._listaMonet.append(Pieniadze(coin))
+        self._MoneyList.append(Pieniadze(coin))
 
         for i in range(number):
             for j in range(grosze):
-                if self._suma < 2.0:
+                if self._Sum < 2.0:
                     self.departure(18)
-                elif self._suma < 6.0:
+                elif self._Sum < 6.0:
                     self.departure(9)
                 else:
                     self.departure(7.2)
@@ -65,11 +64,11 @@ class Parkomat():
     def money_count(self, value, amount):
         value = Decimal(str(value))
 
-        for i in range(len(self._listaMonet)):
-            if value == self._listaMonet[i].get_value():
+        for i in range(len(self._MoneyList)):
+            if value == self._MoneyList[i].get_value():
                 if value < Decimal(str(10)):
-                    self._iloscMonet[value] = amount
-                    if self._iloscMonet[value] > 200:
+                    self._Quantity[value] = amount
+                    if self._Quantity[value] > 200:
                         raise PrzepelnienieParkomatuException
 
     def check_amount_of_money(self, amount):
@@ -81,13 +80,16 @@ class Parkomat():
     def get_license_plate(self, value):
         value = value.rstrip('\n')
         format = compile("^[\w ]*$")
-        if format.match(value) is not None and 3 < len(
-                value) < 11 and value:
-            value = value.replace(' ', '').upper()
-            self._plate = value
-        else:
+
+        try:
+            if format.match(value) is not None and 3 < len(
+                    value) < 11 and value:
+                value = value.replace(' ', '').upper()
+                self._plate = value
+                return self._plate
+        except SystemExit:
             raise BlednaRejestracjaException
-        return self._plate
+
 
     def check_date(self):
         pass
@@ -100,7 +102,8 @@ class Parkomat():
         zamiana = d.replace(hour=godziny, minute=minuty, second=sekundy)
         self._currentTime = zamiana
         self._departureTime = self._currentTime
-        self._Suma = 0
+        self._Sum = 0
+        return self._departureTime
 
     def get_departure_time(self):
         return self._departureTime
@@ -117,28 +120,37 @@ class Parkomat():
             sec = self._departureTime.second
             self._departureTime += timedelta(days=1)
             self._departureTime = self._departureTime.replace(hour=8, minute=0, second=0, microsecond=0)
-            if self._suma != 0:
+            if self._Sum != 0:
                 self._departureTime += timedelta(seconds=sec)
 
         if doKiedy == 5:
             sec = self._departureTime.second
             self._departureTime += timedelta(days=2)
             self._departureTime = self._departureTime.replace(hour=8, minute=0, second=0, microsecond=0)
-            if self._suma != 0:
+            if self._Sum != 0:
                 self._departureTime += timedelta(seconds=sec)
         if doKiedy == 6:
             sec = self._departureTime.second
             self._departureTime += timedelta(days=1)
             self._departureTime = self._departureTime.replace(hour=8, minute=0, second=0, microsecond=0)
-            if self._suma != 0:
+            if self._Sum != 0:
                 self._departureTime += timedelta(seconds=sec)
-        self._suma += Decimal(0.01)
+        self._Sum += Decimal(0.01)
         self._departureTime += timedelta(seconds=seconds)
-#
-#
-#
-#
 
+
+
+#
+#
+#
+#
+#P = Parkomat()
+#P.add_coin(2, 2)
+#P.add_coin(0.01, 1)
+#P.change_current_time('2021', '7', '7', 12, 12, 12)
+#print(P.get_current_time())
+#print(P.get_departure_time())
+#print(P.get_license_plate('bhdhhbd'))
 
 
 

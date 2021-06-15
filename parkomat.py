@@ -3,8 +3,8 @@ from datetime import datetime
 from datetime import timedelta
 from re import compile
 from wyjatki import *
+from tkinter import messagebox
 
-getcontext().prec = 3
 
 class Moneta():
     monety = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50]
@@ -81,15 +81,13 @@ class Parkomat():
         value = value.rstrip('\n')
         format = compile("^[\w ]*$")
 
-        try:
-            if format.match(value) is not None and 3 < len(
-                    value) < 11 and value:
-                value = value.replace(' ', '').upper()
-                self._plate = value
-                return self._plate
-        except SystemExit:
+        if format.match(value) is not None and 3 < len(value) < 11 and value:
+            value = value.replace(' ', '').upper()
+            self._plate = value
+        else:
             raise BlednaRejestracjaException
 
+        return self._plate
 
     def check_date(self):
         pass
@@ -138,11 +136,19 @@ class Parkomat():
         self._Sum += Decimal(0.01)
         self._departureTime += timedelta(seconds=seconds)
 
+    def confirm(self, license):
+        self.get_license_plate(license)
+        if self._Sum == 0:
+            raise NieWrzuconoPieniedzyException
+        ticket = 'Rejestracja: ' + self.get_license_plate(license) + \
+                 '\n\nData zakupu: ' + str(self.get_current_time()) \
+                + '\n\nData wyjazdu: ' + str(self.get_departure_time())
+
+        self._Sum = 0
+        self._departureTime = self._currentTime
+        return ticket
 
 
-#
-#
-#
 #
 #P = Parkomat()
 #P.add_coin(2, 2)
@@ -150,7 +156,8 @@ class Parkomat():
 #P.change_current_time('2021', '7', '7', 12, 12, 12)
 #print(P.get_current_time())
 #print(P.get_departure_time())
-#print(P.get_license_plate('bhdhhbd'))
+print(Parkomat().get_license_plate('xxbuu'))
+
 
 
 

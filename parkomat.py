@@ -3,7 +3,6 @@ from datetime import datetime
 from datetime import timedelta
 from re import compile
 from wyjatki import *
-from tkinter import messagebox
 
 
 class Moneta():
@@ -147,19 +146,6 @@ class Parkomat():
         self._Sum = 0
         self._departureTime = self._currentTime
         return ticket
-
-
-#
-#P = Parkomat()
-#P.add_coin(2, 2)
-#P.add_coin(0.01, 1)
-#P.change_current_time('2021', '7', '7', 12, 12, 12)
-#print(P.get_current_time())
-#print(P.get_departure_time())
-print(Parkomat().get_license_plate('xxbuu'))
-
-
-
 
 
 
